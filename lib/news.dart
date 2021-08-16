@@ -3,15 +3,18 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:meal/news_detail.dart';
 
-class MealScreen extends StatefulWidget {
-  const MealScreen({Key? key}) : super(key: key);
+import 'config.dart';
+
+class NewsScreen extends StatefulWidget {
+  const NewsScreen({Key? key}) : super(key: key);
 
   @override
-  _MealScreenState createState() => _MealScreenState();
+  _NewsScreenState createState() => _NewsScreenState();
 }
 
-class _MealScreenState extends State<MealScreen> {
+class _NewsScreenState extends State<NewsScreen> {
   List _get = [];
 
   @override
@@ -19,14 +22,14 @@ class _MealScreenState extends State<MealScreen> {
     // TODO: implement initState
     super.initState();
 
-    _getData();
+    _getNews();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Makanan"),
+        title: Text("Aplikasi Berita"),
       ),
       body: ListView.builder(
         itemCount: _get.length,
@@ -36,20 +39,37 @@ class _MealScreenState extends State<MealScreen> {
               color: Colors.grey[100],
               height: 100,
               width: 100,
-              child: Center(),
+              child: _get[index]['urlToImage'] != null ?
+              Image.network(
+                _get[index]['urlToImage'],
+                width: 100,
+                fit: BoxFit.cover,
+              ): Center(),
             ),
             title: Text(
-              "Title",
+              "${_get[index]['title']}",
               maxLines: 2,
               overflow:  TextOverflow.ellipsis,
             ),
             subtitle: Text(
-              "Description",
+              "${_get[index]['description']}",
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
             onTap: (){
-
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailNews(
+                    url: _get[index]['url'],
+                    title: _get[index]['title'],
+                    content: _get[index]['content'],
+                    urlToImage: _get[index]['urlToImage'],
+                    author: _get[index]['author'],
+                    publishedAt: _get[index]['publishedAt'],
+                  ),
+                ),
+              );
             },
           );
         },
@@ -58,10 +78,10 @@ class _MealScreenState extends State<MealScreen> {
     );
   }
 
-  Future _getData() async {
+  Future _getNews() async {
     try {
       final response = await http.get(Uri.parse(
-          "https://newsapi.org/v2/everything?q=tesla&from=2021-07-13&sortBy=publishedAt&apiKey=be14be3a5ea949858c0c15edca7cd40d"));
+          Config().urlApi+"top-headlines?country=id&apiKey="+Config().apiKey));
       if (response.statusCode == 200) {
         print(response.body);
         final data = jsonDecode(response.body);

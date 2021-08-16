@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'meal.dart';
+import 'package:flutter/cupertino.dart';
+import 'news.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,12 +11,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Aplikasi Berita',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MealScreen(),
+      home: NewsScreen(),
     );
   }
 }
